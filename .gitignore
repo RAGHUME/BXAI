@@ -1,0 +1,57 @@
+# ================================
+# Python
+# ================================
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ================================
+# Node.js
+# ================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ================================
+# Environment Variables
+# ================================
+.env
+.env.local
+.env.*.local
+
+# ================================
+# Model Artifacts & Large Data
+# ================================
+backend/model_artifacts/
+backend/uploads/
+
+# ================================
+# Blockchain Build Artifacts
+# ================================
+blockchain/artifacts/
+blockchain/cache/
+
+# ================================
+# IDE / Editor
+# ================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ================================
+# Temp / Misc
+# ================================
+*.log
+*.tmp
+find_large.ps1

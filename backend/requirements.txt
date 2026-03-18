@@ -1,0 +1,14 @@
+Flask
+pymongo
+python-dotenv
+Flask-Cors
+web3
+eth-account
+reportlab
+chromadb
+sentence-transformers
+scikit-learn
+lime
+google-generativeai
+user_agents
+numpy

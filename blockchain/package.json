@@ -1,0 +1,22 @@
+{
+  "name": "bxai-blockchain",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "chain": "ganache --wallet.accounts 0x05087dea606bd5857203365e34e92a9ef623fe497d4c55181590fa21a5a60ede,100000000000000000000 --chain.chainId 1337 --server.port 7545",
+    "clean": "rm -rf artifacts cache",
+    "compile": "hardhat compile",
+    "deploy": "hardhat run scripts/deploy.js --network ganache"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "ganache": "^7.9.2",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.7.0",
+    "fs-extra": "^11.1.1",
+    "hardhat": "^2.19.4"
+  }
+}
