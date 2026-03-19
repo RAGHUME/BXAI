@@ -1,21 +1,27 @@
 # BXAI Platform
 
+> **Live Demo:**  
+> 🌐 Frontend: [https://bxai-git-main-raghumes-projects.vercel.app](https://bxai-git-main-raghumes-projects.vercel.app)  
+> 🔧 Backend API: [https://bxai-backend.onrender.com](https://bxai-backend.onrender.com)
+
 ## Introduction
-BXAI is a blockchain-backed evidence lifecycle management platform built for digital forensics teams. It delivers role-aware dashboards (admin, investigator, and end-user) that orchestrate case intake, evidence handling, blockchain anchoring, and explainable AI (XAI) insights. The goal is to provide tamper-resistant provenance records while making investigation workflows transparent and auditable.
+BXAI is a blockchain-backed evidence lifecycle management platform built for digital forensics teams. It delivers role-aware dashboards (admin, investigator, and end-user) that orchestrate case intake, evidence handling, blockchain anchoring, explainable AI (XAI) insights, and AI-powered log anomaly detection (X-LAD). The goal is to provide tamper-resistant provenance records while making investigation workflows transparent and auditable.
 
 ## Core capabilities & workflow
 1. **Case intake and assignment** – Admins curate cases, approve stakeholder requests, and assign investigators.
 2. **Secure evidence handling** – Investigators upload artifacts, which are hashed client-side and stored with metadata in MongoDB.
 3. **Blockchain anchoring** – Evidence hashes are anchored to an Ethereum-compatible ledger (local Ganache) to create immutable attestations.
 4. **Chain of custody tracking** – Admins review a timeline of every action performed on each evidence item, with exportable PDFs for reporting.
-5. **Planned XAI insights** – The roadmap includes explainability modules to surface model outputs, bias checks, and human-readable rationales.
+5. **XAI insights** – Explainability modules surface model outputs, bias checks, and human-readable rationales for evidence analysis.
+6. **Log anomaly detection (X-LAD)** – A background AI service that continuously analyzes system activity logs using ChromaDB embeddings and Google Generative AI to detect anomalous behavior in real-time.
 
 ## System architecture
 - **Frontend (Vite + React + Tailwind)** – Delivers dashboards, evidence management, blockchain actions, and chain-of-custody visualizations.
-- **Backend (Flask REST API)** – Exposes authentication, case management, evidence operations, blockchain anchoring endpoints, and PDF generation.
-- **MongoDB** – Persists accounts, cases, evidence metadata, activity logs, chain-of-custody records, and blockchain receipts.
+- **Backend (Flask REST API)** – Exposes authentication, case management, evidence operations, blockchain anchoring endpoints, XAI analysis, and PDF generation.
+- **MongoDB Atlas** – Cloud-hosted database persisting accounts, cases, evidence metadata, activity logs, chain-of-custody records, and blockchain receipts.
 - **Blockchain microservice** – Uses Hardhat for contract deployment and Web3.py for anchoring/verification on Ganache.
-- **XAI pipeline (planned)** – Microservices and background jobs that will analyze evidence or model predictions and send results back to the dashboards.
+- **XAI pipeline** – Explainability services for evidence analysis using LIME, scikit-learn, and Google Generative AI.
+- **X-LAD (Log Anomaly Detection)** – Background daemon using ChromaDB vector embeddings and sentence-transformers to detect anomalous activity patterns.
 
 ## Repository structure
 ```
@@ -66,10 +72,12 @@ BXAI is a blockchain-backed evidence lifecycle management platform built for dig
 - **Indexes:** MongoDB maintains `_id` indexes by default; consider adding secondary indexes on `caseId`, `evidence_id`, and `createdAt` for production workloads.
 
 ## Methodology & technology stack
-- **Frontend** – React 18, Vite, Tailwind CSS, Heroicons, React Router.
-- **Backend** – Flask, PyMongo, Web3.py, ReportLab (PDF), Python 3.10.
+- **Frontend** – React 18, Vite, Tailwind CSS, Heroicons, React Router, Plotly.js.
+- **Backend** – Flask, Gunicorn, PyMongo, Web3.py, ReportLab (PDF), Python 3.10.
+- **AI/ML** – ChromaDB, Sentence-Transformers, scikit-learn, LIME, Google Generative AI, OpenRouter (Nemotron/DeepSeek).
 - **Blockchain** – Solidity smart contract deployed via Hardhat to Ganache.
-- **Data storage** – MongoDB for document persistence, local filesystem for evidence uploads.
+- **Data storage** – MongoDB Atlas (cloud), ChromaDB vector store for log embeddings.
+- **Deployment** – Vercel (frontend), Render (backend API).
 - **Testing & tooling** – npm scripts, pip/venv, environment-driven configuration.
 
 ## Prerequisites
@@ -141,7 +149,22 @@ BXAI is a blockchain-backed evidence lifecycle management platform built for dig
    ```
 5. Restart the Flask API after updating the environment variables.
 
-## Running the full stack
+## Deployment
+
+### Live URLs
+| Component | Platform | URL |
+|---|---|---|
+| Frontend | Vercel | [bxai-git-main-raghumes-projects.vercel.app](https://bxai-git-main-raghumes-projects.vercel.app) |
+| Backend API | Render | [bxai-backend.onrender.com](https://bxai-backend.onrender.com) |
+| Database | MongoDB Atlas | Cloud-hosted (auto-connected) |
+
+> **Note:** The Render free tier spins down after 15 minutes of inactivity. The first request after idle may take ~30 seconds.
+
+### Environment Variables
+- **Backend (Render):** `MONGODB_URL`, `SMTP_*`, `GOOGLE_API_KEY`, `OPENROUTER_API_KEY`, `FRONTEND_ORIGIN`
+- **Frontend (Vercel):** `VITE_API_BASE_URL` → points to the Render backend URL
+
+## Running locally
 1. Start Ganache.
 2. Launch the Flask backend (`flask --app app run --port 5000`).
 3. Run the React frontend (`npm run dev` inside `frontend/`).
@@ -177,24 +200,35 @@ The backend seeds this admin (password stored as a secure hash) on startup if it
 4. Track the status of submissions inside **Your case requests**; accepted requests unlock deeper case insights.
 5. Receive notifications when admins approve or reject requests, and download relevant public artifacts.
 
-## XAI roadmap
-- Build ingestion services for model outputs (e.g., anomaly detection or investigative classifiers).
-- Store explanation metadata alongside evidence to surface reason codes, feature attributions, and confidence scores.
-- Extend dashboards with XAI widgets summarizing insights, drift alerts, and explainability reports.
-- Provide PDF/CSV exports of XAI findings to complement the chain-of-custody package.
+## XAI & AI Features
 
-### Planned XAI endpoints
-- `GET /api/xai/insights` – Returns recent explainability summaries per case/evidence (pending implementation).
-- `POST /api/xai/analyze` – Triggers batch explanation generation for newly uploaded evidence.
-- `GET /api/xai/reports/<evidence_id>` – Provides downloadable PDF/CSV explainability reports.
-- Authentication and role-based access controls will mirror existing admin/investigator patterns.
+### Explainable AI (XAI)
+- Evidence analysis with LIME-based feature attribution and Google Generative AI reasoning.
+- XAI insights stored alongside evidence metadata with confidence scores.
+- Dashboard widgets summarizing insights, drift alerts, and explainability reports.
+
+### Log Anomaly Detection (X-LAD)
+- Background service continuously monitors activity logs for anomalous patterns.
+- Uses ChromaDB vector embeddings with sentence-transformers for semantic similarity.
+- Detected anomalies are flagged in real-time on the admin dashboard.
+
+### API Endpoints
+- `GET /api/xai/insights` – Returns explainability summaries per case/evidence.
+- `POST /api/xai/analyze` – Triggers explanation generation for evidence.
+- `GET /api/xai/reports/<evidence_id>` – Downloadable PDF/CSV explainability reports.
+- `GET /api/logs/anomalies` – Lists detected log anomalies.
+- `GET /api/logs/stats` – Log processing statistics and health metrics.
 
 ## Current status
-- Chain of Custody UI is live in the admin portal with timeline filtering and PDF export; `/api/admin/chain-of-custody` now returns fully JSON-serializable payloads and handles CORS preflight requests.
-- Admin dashboard case requests include accept/reject controls, and duplicate activity keys have been resolved to suppress React warnings.
-- Blockchain anchoring and verification flows remain dependent on the local Ganache network; ensure it is running before testing related features.
-- Pending follow-ups: migrate remaining `datetime.utcnow()` usages to timezone-aware helpers, harden multi-admin authentication, and stand up the XAI microservices.
+- ✅ Chain of Custody UI live with timeline filtering and PDF export.
+- ✅ Admin dashboard with case requests (accept/reject controls).
+- ✅ Blockchain anchoring and verification (requires Ganache for local dev).
+- ✅ XAI analysis pipeline integrated with Google Generative AI and LIME.
+- ✅ X-LAD log anomaly detection running as a background service.
+- ✅ Deployed: Frontend on Vercel, Backend on Render, Database on MongoDB Atlas.
+- 🔄 Pending: Timezone-aware datetime helpers, multi-admin auth hardening.
 
 ## Notes
+- The backend uses Gunicorn as the production WSGI server.
 - Add new activity/case/evidence documents directly in MongoDB to see live changes on the dashboard.
 - Update `backend/app.py` if you want to support additional admins or JWT-based auth in the future.
