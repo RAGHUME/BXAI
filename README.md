@@ -170,14 +170,8 @@ BXAI is a blockchain-backed evidence lifecycle management platform built for dig
 3. Run the React frontend (`npm run dev` inside `frontend/`).
 4. Visit `http://localhost:5173` and sign in as the seeded admin to exercise dashboards, evidence workflows, and chain-of-custody timelines.
 
-## Admin access
-- Email: `raghu.bldeacet17@gmail.com`
-- Password: `ShRI1NIV@S`
-
-The backend seeds this admin (password stored as a secure hash) on startup if it doesn't already exist.
-
 ## Admin workflow
-1. Visit `http://localhost:5173/signin` and log in with the credentials above.
+1. Visit the app and log in with admin credentials (configured in `.env`).
 2. Upon success you are redirected to `/admin/dashboard`, showing case/evidence/alert counts and recent activity from MongoDB collections (`cases`, `evidence`, `alerts`, `activity_logs`).
 3. Navigate to `/admin/chain-of-custody` to filter timelines by case or evidence and export PDF summaries.
 4. Case request modals allow approving or rejecting user follow requests; accepted cases can be assigned to investigators.
